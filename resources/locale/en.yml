@@ -36,7 +36,8 @@ fof-doorman:
     page:
       title: Doorman
       doorkey:
-        used_times: "{remaining, plural, one {{remaining} Use left} other {{remaining} Uses left}}"
+        left_uses: "{remaining, plural, =0 {Unlimited Uses} one {{remaining} Use left} other {{remaining} Uses left}}"
+        total_uses: "{totalUses, plural, one {Used {totalUses} time} other {Used {totalUses} times}}"
         title: Invite Codes
         help:
           key: "Key: Code the user will type in when registering."

@@ -15,7 +15,9 @@ export default class DoormanSettingsListItem extends Component {
     }
 
     view() {
-        var remaining = this.doorkey.maxUses() - this.doorkey.uses();
+        var maxUses = this.doorkey.maxUses();
+        var totalUses = this.doorkey.uses();
+        var remaining = maxUses - totalUses;
 
         return (
             <div className="DoormanSettingsListItem">
@@ -36,7 +38,7 @@ export default class DoormanSettingsListItem extends Component {
                     })}
                     <input
                         className="FormControl Doorkey-maxUses"
-                        value={this.doorkey.maxUses() || '0'}
+                        value={maxUses || '0'}
                         type="number"
                         placeholder={app.translator.trans('fof-doorman.admin.page.doorkey.max_uses')}
                         onchange={withAttr('value', this.updateMaxUses.bind(this, this.doorkey))}
@@ -62,7 +64,7 @@ export default class DoormanSettingsListItem extends Component {
                     onclick: this.deleteDoorkey.bind(this, this.doorkey),
                 })}
 
-                {this.doorkey.maxUses() === this.doorkey.uses() ? (
+                {maxUses > 0 && maxUses === totalUses ? (
                     Badge.component({
                         className: 'Doorkey-badge',
                         icon: 'fas fa-user-slash',
@@ -70,7 +72,11 @@ export default class DoormanSettingsListItem extends Component {
                     })
                 ) : (
                     <div>
-                        <h3 className="Doorkey-left">{app.translator.trans('fof-doorman.admin.page.doorkey.used_times', { remaining })}</h3>
+                        <h3 className="Doorkey-left">
+                            {remaining < 0
+                                ? app.translator.trans('fof-doorman.admin.page.doorkey.total_uses', { totalUses })
+                                : app.translator.trans('fof-doorman.admin.page.doorkey.left_uses', { remaining })}
+                        </h3>
                     </div>
                 )}
             </div>
