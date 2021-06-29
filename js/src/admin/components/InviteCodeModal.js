@@ -33,6 +33,11 @@ export default class InviteCodeModal extends Modal {
             });
     }
 
+    onremove(vnode) {
+        super.onremove(vnode);
+        app.alerts.dismiss(this.alert);
+    }
+
     content() {
         return (
             <div className="Modal-body">
@@ -87,7 +92,7 @@ export default class InviteCodeModal extends Modal {
     }
 
     addEmails() {
-        this.alertAttrs = null;
+        app.alerts.dismiss(this.alert);
         m.redraw();
         this.badEmails = [];
 
@@ -96,7 +101,7 @@ export default class InviteCodeModal extends Modal {
         value.split(/[ ,]+/).map((email) => {
             if (!this.emails.includes(email)) {
                 if (this.emails.length + 1 > this.doorkey.data.attributes.maxUses) {
-                    this.alertAttrs = ({ type: 'error' }, app.translator.trans('fof-doorman.admin.modal.max_use_conflict'));
+                    this.alert = app.alerts.show(Alert, { type: 'error' }, app.translator.trans('fof-doorman.admin.modal.max_use_conflict'));
                     m.redraw();
                 } else {
                     if (this.validateEmail(email)) {
@@ -105,9 +110,11 @@ export default class InviteCodeModal extends Modal {
                         m.redraw();
                     } else {
                         this.badEmails.push(email);
-                        this.alertAttrs =
-                            ({ type: 'error' },
-                            app.translator.trans('fof-doorman.admin.modal.invalid_emails', { emails: this.badEmails.join(', ') }));
+                        this.alert = app.alerts.show(
+                            Alert,
+                            { type: 'error' },
+                            app.translator.trans('fof-doorman.admin.modal.invalid_emails', { emails: this.badEmails.join(', ') })
+                        );
                         m.redraw();
                     }
                 }
@@ -128,7 +135,7 @@ export default class InviteCodeModal extends Modal {
     send(e) {
         e.preventDefault();
 
-        this.alertAttrs = null;
+        app.alerts.dismiss(this.alert);
 
         this.loading = true;
 
@@ -141,7 +148,7 @@ export default class InviteCodeModal extends Modal {
             },
         }).then(() => {
             app.modal.close();
-            app.alerts.show({ type: 'success' }, app.translator.trans('fof-doorman.admin.modal.success'));
+            this.alert = app.alerts.show(Alert, { type: 'success' }, app.translator.trans('fof-doorman.admin.modal.success'));
         });
     }
 }
